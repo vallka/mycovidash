@@ -92,12 +92,12 @@ def get_plot(pars=None):
     print (all_years,all_ages,all_sexes,all_causes,all_locations)
     return fig,all_years,all_ages,all_sexes,all_causes,all_locations
 
-@app.route('/')
+@app.route('/mycovidash')
 def init():
     fig,all_years,all_ages,all_sexes,all_causes,all_locations = get_plot()
     return render_template('mycovidash.html',fig=fig,all_years=all_years,all_ages=all_ages,all_sexes=all_sexes,all_causes=all_causes,all_locations=all_locations)
 
-@app.route('/update')
+@app.route('/mycovidash/update')
 def update():
     fig,all_years,all_ages,all_sexes,all_causes,all_locations = get_plot([request.args.get('years',''),
                         request.args.get('ages',''),
