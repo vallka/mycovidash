@@ -33,11 +33,36 @@ def get_data():
 
     data = data_1519.copy()
     data = data.append(data_2021)
+
+    data.loc[data['age']==0,'age']='0'
     return data
 
 
-def get_plot():
+def get_plot(pars=None):
     data = get_data()
+
+    all_years = data['year'].unique()
+    all_ages = data['age'].unique()
+    all_sexes = data['sex'].unique()
+    all_causes = data['cause'].unique()
+    all_locations = data['location'].unique()
+
+    years = list(map(int,pars[0].strip(',').split(','))) if pars else None
+    ages = list(pars[1].strip(',').split(',')) if pars else None
+    sexes = list(pars[2].strip(',').split(',')) if pars else None
+    locations = list(pars[3].strip(',').split(',')) if pars else None
+    causes = list(pars[4].strip(',').split(',')) if pars else None
+
+    if years:
+        data = data[data['year'].isin(years)]
+    if ages:
+        data = data[data['age'].isin(ages)]
+    if sexes:
+        data = data[data['sex'].isin(sexes)]
+    if locations:
+        data = data[data['location'].isin(locations)]
+    if causes:
+        data = data[data['cause'].isin(causes)]
 
     dt1 = data.groupby(['year','week']).agg({'deaths':np.sum})
     dt1.reset_index(inplace=True)
@@ -45,10 +70,20 @@ def get_plot():
     fig = px.line(dt1,x='week', y='deaths',line_group='year',color='year')
 
     fig = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-    return fig
+    print (all_years,all_ages,all_sexes,all_causes,all_locations)
+    return fig,all_years,all_ages,all_sexes,all_causes,all_locations
 
 @app.route('/')
 def init():
-    fig = get_plot()
-    return render_template('mycovidash.html',fig=fig)
+    fig,all_years,all_ages,all_sexes,all_causes,all_locations = get_plot()
+    return render_template('mycovidash.html',fig=fig,all_years=all_years,all_ages=all_ages,all_sexes=all_sexes,all_causes=all_causes,all_locations=all_locations)
 
+@app.route('/update')
+def update():
+    fig,all_years,all_ages,all_sexes,all_causes,all_locations = get_plot([request.args.get('years',''),
+                        request.args.get('ages',''),
+                        request.args.get('sexes',''),
+                        request.args.get('locations',''),
+                        request.args.get('causes',''),
+                        ])
+    return fig

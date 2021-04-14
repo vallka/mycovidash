@@ -14,11 +14,89 @@
             </h1>
 
             <div id="myPlot"></div>
+
+            <div class="columns">
+                <div class="column is-2">
+                    Years:<br>
+                    {% for s in all_years %}
+                    <input type="checkbox" value="{{ s }}" class="years_cb" checked> 20{{ s }}<br>
+                    {% endfor %}
+                </div>
+                <div class="column is-2">
+                    Age:<br>
+                    {% for s in all_ages %}
+                    <input type="checkbox" value="{{ s }}" class="ages_cb" checked> {{ s }}<br>
+                    {% endfor %}
+                </div>
+                <div class="column is-1">
+                    Sex:<br>
+                    {% for s in all_sexes %}
+                    <input type="checkbox" value="{{ s }}" class="sexes_cb" checked> {{ s }}<br>
+                    {% endfor %}
+                </div>
+                <div class="column is-3">
+                    Location:<br>
+                    {% for s in all_locations %}
+                    <input type="checkbox" value="{{ s }}" class="locations_cb" checked> {{ s }}<br>
+                    {% endfor %}
+                </div>
+                <div class="column">
+                    Cause:<br>
+                    {% for s in all_causes %}
+                    <input type="checkbox" value="{{ s }}" class="causes_cb" checked> {{ s }}<br>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="has-text-centered">
+                <button id="update" class="button is-primary">Update</button>
+            </div>
+
         </div>
         </section>
 </body>
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script>
     Plotly.newPlot('myPlot', {{ fig | safe }} );
+    
+    $('#update').click(function(){
+        let years = '';
+        $(".years_cb:checked").each(function(){
+            years += this.value + ','
+        })
+        let ages = '';
+        $(".ages_cb:checked").each(function(){
+            ages += this.value + ','
+        })
+        let sexes = '';
+        $(".sexes_cb:checked").each(function(){
+            sexes += this.value + ','
+        })
+        let locations = '';
+        $(".locations_cb:checked").each(function(){
+            locations += this.value + ','
+        })
+        let causes = '';
+        $(".causes_cb:checked").each(function(){
+            causes += this.value + ','
+        })
+    
+        $.ajax({
+            url: "/update",
+            type: "GET",
+            contentType: 'application/json;charset=UTF-8',
+            data: {
+                years: years,
+                ages: ages,
+                sexes: sexes,
+                locations: locations,
+                causes: causes
+            },
+            dataType:"json",
+            success: function (data) {
+                Plotly.react('myPlot', data );
+            }
+        });
+    })
 </script>
 </html>
