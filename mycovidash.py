@@ -4,10 +4,25 @@ import numpy as np
 import pandas as pd
 import plotly
 import plotly.express as px
+import os
+import time
 
 app = Flask(__name__)
 
 def get_data():
+    store_path = 'data.pkl'
+
+    try:
+        tm = os.path.getmtime(store_path) 
+        if int(time.time())-int(tm) > 24 * 60 * 60:
+            raise Exception("Cache expired")
+
+        data = pd.read_pickle(store_path)
+        return data
+    except Exception as e:
+        print (e)
+        pass
+
     data_2021 = pd.read_excel ('https://www.nrscotland.gov.uk/files//statistics/covid19/weekly-deaths-by-location-age-sex.xlsx',
     sheet_name='Data',
             skiprows=4,
@@ -27,15 +42,19 @@ def get_data():
             usecols='A:F',
             header=None,
             names=['year','week','location','sex','age','deaths'],
+            #index_col=[1]
             )
 
     data_1519['cause'] = 'Non-COVID-19'
 
     data = data_1519.copy()
     data = data.append(data_2021)
-
     data.loc[data['age']==0,'age']='0'
+
+    data.to_pickle(store_path)
+
     return data
+
 
 
 def get_plot(pars=None):
