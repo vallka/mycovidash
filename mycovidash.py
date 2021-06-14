@@ -6,6 +6,7 @@ import plotly
 import plotly.express as px
 import os
 import time
+import requests
 
 app = Flask(__name__)
 
@@ -23,7 +24,11 @@ def get_data():
         print (e)
         pass
 
-    data_2021 = pd.read_excel ('https://www.nrscotland.gov.uk/files//statistics/covid19/weekly-deaths-by-location-age-sex.xlsx',
+    xl = requests.get('https://www.nrscotland.gov.uk/files//statistics/covid19/weekly-deaths-by-location-age-sex.xlsx')    
+    with open('weekly-deaths-by-location-age-sex.xlsx','w') as f:
+        f.write(xl.text)
+
+    data_2021 = pd.read_excel ('weekly-deaths-by-location-age-sex.xlsx',
     sheet_name='Data',
             skiprows=4,
             skipfooter=2,
@@ -35,7 +40,11 @@ def get_data():
     data_2021['year'] = data_2021.week.str.slice(0,2).astype(int)
     data_2021['week'] = data_2021.week.str.slice(3,5).astype(int)
 
-    data_1519 = pd.read_excel ('https://www.nrscotland.gov.uk/files//statistics/covid19/weekly-deaths-by-location-age-group-sex-15-19.xlsx',
+    xl = requests.get('https://www.nrscotland.gov.uk/files//statistics/covid19/weekly-deaths-by-location-age-group-sex-15-19.xlsx')    
+    with open('weekly-deaths-by-location-age-group-sex-15-19.xlsx','w') as f:
+        f.write(xl.text)
+
+    data_1519 = pd.read_excel ('weekly-deaths-by-location-age-group-sex-15-19.xlsx',
             sheet_name='Data',
             skiprows=4,
             skipfooter=2,
