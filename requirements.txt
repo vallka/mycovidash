@@ -35,3 +35,4 @@ tornado==6.1
 traitlets==5.0.5
 wcwidth==0.2.5
 Werkzeug==1.0.1
+requests
