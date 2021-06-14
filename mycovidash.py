@@ -25,7 +25,7 @@ def get_data():
         pass
 
     xl = requests.get('https://www.nrscotland.gov.uk/files//statistics/covid19/weekly-deaths-by-location-age-sex.xlsx')    
-    with open('weekly-deaths-by-location-age-sex.xlsx','w') as f:
+    with open('weekly-deaths-by-location-age-sex.xlsx','wb') as f:
         f.write(xl.content)
 
     data_2021 = pd.read_excel ('weekly-deaths-by-location-age-sex.xlsx',
@@ -41,7 +41,7 @@ def get_data():
     data_2021['week'] = data_2021.week.str.slice(3,5).astype(int)
 
     xl = requests.get('https://www.nrscotland.gov.uk/files//statistics/covid19/weekly-deaths-by-location-age-group-sex-15-19.xlsx')    
-    with open('weekly-deaths-by-location-age-group-sex-15-19.xlsx','w') as f:
+    with open('weekly-deaths-by-location-age-group-sex-15-19.xlsx','wb') as f:
         f.write(xl.content)
 
     data_1519 = pd.read_excel ('weekly-deaths-by-location-age-group-sex-15-19.xlsx',
