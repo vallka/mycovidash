@@ -14,7 +14,7 @@ def get_data():
     store_path = 'data.pkl'
 
     try:
-        tm = os.path.getmtime(store_path) 
+        tm = os.path.getmtime(store_path)
         if int(time.time())-int(tm) > 24 * 60 * 60:
             raise Exception("Cache expired")
 
@@ -24,7 +24,10 @@ def get_data():
         print (e)
         pass
 
-    xl = requests.get('https://www.nrscotland.gov.uk/files//statistics/covid19/weekly-deaths-by-location-age-sex.xlsx')    
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0',
+    }
+    xl = requests.get('https://www.nrscotland.gov.uk/files//statistics/covid19/weekly-deaths-by-location-age-sex.xlsx', headers=headers)
     with open('weekly-deaths-by-location-age-sex.xlsx','wb') as f:
         f.write(xl.content)
 
@@ -40,7 +43,7 @@ def get_data():
     data_2021['year'] = data_2021.week.str.slice(0,2).astype(int)
     data_2021['week'] = data_2021.week.str.slice(3,5).astype(int)
 
-    xl = requests.get('https://www.nrscotland.gov.uk/files//statistics/covid19/weekly-deaths-by-location-age-group-sex-15-19.xlsx')    
+    xl = requests.get('https://www.nrscotland.gov.uk/files//statistics/covid19/weekly-deaths-by-location-age-group-sex-15-19.xlsx', headers=headers)
     with open('weekly-deaths-by-location-age-group-sex-15-19.xlsx','wb') as f:
         f.write(xl.content)
 
